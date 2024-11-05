@@ -1,0 +1,45 @@
+1- create markdown mail 
+php artisan make:mail emailname --markdown=emails.view_name
+
+2-this command will create view file resource views 
+
+3-define your variables in the construct of the mail
+    public $order, $user;
+    public function __construct(Orders $order, User $user)
+    {
+        $this->user = $user;
+        $this->order = $order;
+    }
+
+
+4-define the build function 
+    public function build()
+    {
+        return $this->markdown('emails.orders')
+            ->subject('Your Order is being Processed')
+            ->with([
+                'order' => $this->order,
+                'customer' => $this->user,                                                      
+                'order_url' => URL::route('orders.show', $this->order->id)            دا الزرار الي يدوس عليه يروح للاوردر بتاعه
+            ]);
+    }
+
+
+5-define controller logic 
+
+
+$user = User::find($id)?? auth()->user();
+$order = Orders::find($id);
+Mail::to($user->email)->send(new OrderMail($order, $user));
+
+
+
+6-create you env email cardinationls 
+MAIL_MAILER=smtp ? mailgun ? mailtrap
+MAIL_HOST=localhost
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS="ealfy@serv5.com"
+MAIL_FROM_NAME="${APP_NAME}"
