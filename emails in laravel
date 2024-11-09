@@ -59,8 +59,8 @@ define the content in the bulid :
 
 9- dont forget to add this also in your .env file                --these code work corectly only for test
 
-MAILGUN_DOMAIN=sandbox872e162984154be78a95d5d2d97bec8f.mailgun.org
-MAILGUN_SECRET=1fcd0651bea13335cd85751a234ad048-73f745ed-f0e11bc9
+MAILGUN_DOMAIN=
+MAILGUN_SECRET=
 
 MAIL_MAILER=mailgun
 MAIL_HOST=mailpit
