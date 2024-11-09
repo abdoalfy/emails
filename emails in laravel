@@ -1,10 +1,32 @@
-1- create markdown mail 
-php artisan make:mail emailname --markdown=emails.view_name
+1-INSTALL MAILGUN IN YOUR PROJECT
+  composer require symfony/mailgun-mailer symfony/http-client
 
-2-this command will create view file resource views 
+2-CREATE ACCOUNT IN MAILGUN WEBSITE=>(enter sending then take sending name copy)(then enter overview then  API SELECT...PHP AND TAKE API KEY COPY )
+   --  if you didnot find the api key in the php you can get the API Security form the nav then take the (HTTP webhook signing key)
 
-3-define your variables in the construct of the mail
-    public $order, $user;
+3-ENTER TO env FILE =>
+  MAILGUN_DOMAIN=SENDING_NAME
+  MAILGUN_SECRET=API_KEY   
+
+
+4-enter in config folder...in mail.php file...in from and edit the defult with mailgun and the mail and example with your test email
+
+5-in service.php in config folder add this 
+    'mailgun' => [
+        'domain' => env('MAILGUN_DOMAIN'),
+        'secret' => env('MAILGUN_SECRET'),
+        'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
+        'scheme' => 'https',
+    ],
+
+
+
+6-php artisan make:mail Testmail --markdown=emails.welcome
+
+
+7-in app mail test.php :
+define your data in the construct :
+public $order, $user;
     public function __construct(Orders $order, User $user)
     {
         $this->user = $user;
@@ -12,10 +34,11 @@ php artisan make:mail emailname --markdown=emails.view_name
     }
 
 
-4-define the build function 
-    public function build()
+define the content in the bulid :
+
+  public function build()
     {
-        return $this->markdown('emails.orders')
+        return $this->markdown('emails.welcome')
             ->subject('Your Order is being Processed')
             ->with([
                 'order' => $this->order,
@@ -25,21 +48,29 @@ php artisan make:mail emailname --markdown=emails.view_name
     }
 
 
-5-define controller logic 
+
+8-Route::get('/send', function () {
+    Mail::to('abdoalfy898@gmail.com')->send(new Testmail());
+    return response('sending');
+});
 
 
-$user = User::find($id)?? auth()->user();
-$order = Orders::find($id);
-Mail::to($user->email)->send(new OrderMail($order, $user));
 
 
+9- dont forget to add this also in your .env file                --these code work corectly only for test
 
-6-create you env email cardinationls 
-MAIL_MAILER=smtp ? mailgun ? mailtrap
-MAIL_HOST=localhost
+MAILGUN_DOMAIN=sandbox872e162984154be78a95d5d2d97bec8f.mailgun.org
+MAILGUN_SECRET=1fcd0651bea13335cd85751a234ad048-73f745ed-f0e11bc9
+
+MAIL_MAILER=mailgun
+MAIL_HOST=mailpit
 MAIL_PORT=1025
 MAIL_USERNAME=null
 MAIL_PASSWORD=null
 MAIL_ENCRYPTION=null
-MAIL_FROM_ADDRESS="ealfy@serv5.com"
+MAIL_FROM_ADDRESS="shiplink@gmail.com"
 MAIL_FROM_NAME="${APP_NAME}"
+
+
+
+
